@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package genny.protometrics;
+
+message Operation {
+    required string Name = 1;
+    required int64 StartedEpochNanos = 2;
+    required int64 DurationNanos = 3;
+}

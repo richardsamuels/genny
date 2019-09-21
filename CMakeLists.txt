@@ -28,6 +28,10 @@ include(CheckCompiler)
 include(ConfigureInstall)
 include(ParseAndAddCatchTests)
 include(CreateGennyTargets)
+include(FindProtobuf)
+
+find_package(Protobuf REQUIRED)
+include_directories(${Protobuf_INCLUDE_DIRS})
 
 if(${GENNY_BUILD_FLAT})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib CACHE PATH "")
