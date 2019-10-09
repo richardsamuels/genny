@@ -20,7 +20,7 @@
 
 namespace genny {
 
-struct Actor;
+class Actor;
 
 /**
  * A convenience typedef for the return value from ActorProducer.

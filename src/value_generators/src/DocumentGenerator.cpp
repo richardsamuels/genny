@@ -24,6 +24,7 @@
 #include <bsoncxx/builder/basic/array.hpp>
 #include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/builder/basic/kvp.hpp>
+#include <utility>
 
 
 namespace {
@@ -56,7 +57,7 @@ using UniqueGenerator = std::unique_ptr<Generator<T>>;
 template <typename T>
 class ConstantAppender : public Generator<T> {
 public:
-    explicit ConstantAppender(T value) : _value{value} {}
+    explicit ConstantAppender(T value) : _value{std::move(value)} {}
     explicit ConstantAppender() : _value{} {}
     T evaluate() override {
         return _value;
@@ -187,8 +188,8 @@ public:
     /** @param node `{t:<int>, p:double}` */
     BinomialInt64Generator(const Node& node, DefaultRandom& rng)
         : _rng{rng},
-          _tGen{intGenerator(extract(node, "t", "binomial"), _rng)},
-          _p{extract(node, "p", "binomial").to<double>()} {}
+          _p{extract(node, "p", "binomial").to<double>()},
+          _tGen{intGenerator(extract(node, "t", "binomial"), _rng)} {}
 
     int64_t evaluate() override {
         auto distribution = boost::random::binomial_distribution<int64_t>{_tGen->evaluate(), _p};
@@ -207,8 +208,8 @@ public:
     /** @param node `{k:<int>, p:double}` */
     NegativeBinomialInt64Generator(const Node& node, DefaultRandom& rng)
         : _rng{rng},
-          _kGen{intGenerator(extract(node, "k", "negative_binomial"), _rng)},
-          _p{extract(node, "p", "negative_binomial").to<double>()} {}
+          _p{extract(node, "p", "negative_binomial").to<double>()},
+          _kGen{intGenerator(extract(node, "k", "negative_binomial"), _rng)} {}
 
     int64_t evaluate() override {
         auto distribution =
@@ -292,7 +293,7 @@ public:
         auto length = _lengthGen->evaluate();
         std::string str(length, '\0');
 
-        for (int i = 0; i < length; ++i) {
+        for (long long i = 0; i < length; ++i) {
             str[i] = _alphabet[distribution(_rng)];
         }
 
@@ -362,7 +363,7 @@ private:
  */
 template <typename O>
 std::optional<std::pair<Parser<O>, std::string>> extractKnownParser(
-    const Node& node, DefaultRandom& rng, std::map<std::string, Parser<O>> parsers) {
+    const Node& node, DefaultRandom&, std::map<std::string, Parser<O>> parsers) {
     if (!node || !node.isMap()) {
         return std::nullopt;
     }

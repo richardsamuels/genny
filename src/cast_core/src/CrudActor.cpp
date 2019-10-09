@@ -39,7 +39,7 @@ namespace YAML {
 template <>
 struct convert<mongocxx::options::aggregate> {
     using AggregateOptions = mongocxx::options::aggregate;
-    static Node encode(const AggregateOptions& rhs) {
+    static Node encode(const AggregateOptions&) {
         return {};
     }
 
@@ -84,7 +84,7 @@ struct convert<mongocxx::options::aggregate> {
 template <>
 struct convert<mongocxx::options::bulk_write> {
     using BulkWriteOptions = mongocxx::options::bulk_write;
-    static Node encode(const BulkWriteOptions& rhs) {
+    static Node encode(const BulkWriteOptions&) {
         return {};
     }
 
@@ -111,7 +111,7 @@ struct convert<mongocxx::options::bulk_write> {
 template <>
 struct convert<mongocxx::options::count> {
     using CountOptions = mongocxx::options::count;
-    static Node encode(const CountOptions& rhs) {
+    static Node encode(const CountOptions&) {
         return {};
     }
 
@@ -143,7 +143,7 @@ struct convert<mongocxx::options::count> {
 template <>
 struct convert<mongocxx::options::estimated_document_count> {
     using CountOptions = mongocxx::options::estimated_document_count;
-    static Node encode(const CountOptions& rhs) {
+    static Node encode(const CountOptions&) {
         return {};
     }
 
@@ -166,7 +166,7 @@ struct convert<mongocxx::options::estimated_document_count> {
 
 template <>
 struct convert<mongocxx::options::insert> {
-    static Node encode(const mongocxx::options::insert& rhs) {
+    static Node encode(const mongocxx::options::insert&) {
         return {};
     }
     static bool decode(const Node& node, mongocxx::options::insert& rhs) {
@@ -190,7 +190,7 @@ struct convert<mongocxx::options::insert> {
 template <>
 struct convert<mongocxx::options::transaction> {
     using TransactionOptions = mongocxx::options::transaction;
-    static Node encode(const TransactionOptions& rhs) {
+    static Node encode(const TransactionOptions&) {
         return {};
     }
 

@@ -17,6 +17,7 @@
 #include <memory>
 #include <set>
 #include <sstream>
+#include <utility>
 
 #include <mongocxx/instance.hpp>
 #include <mongocxx/pool.hpp>
@@ -35,14 +36,14 @@ WorkloadContext::WorkloadContext(const Node& node,
     : v1::HasNode{node},
       _registry{&registry},
       _orchestrator{&orchestrator},
-      _rateLimiters{10},
-      _poolManager{mongoUri, apmCallback} {
+      _poolManager{mongoUri, std::move(apmCallback)},
+      _rateLimiters{10} {
 
     std::set<std::string> validSchemaVersions{"2018-07-01"};
 
     // This is good enough for now. Later can add a WorkloadContextValidator concept
     // and wire in a vector of those similar to how we do with the vector of Producers.
-    if (const std::string schemaVersion = (*this)["SchemaVersion"].to<std::string>();
+    if (const auto schemaVersion = (*this)["SchemaVersion"].to<std::string>();
         validSchemaVersions.count(schemaVersion) != 1) {
         std::ostringstream errMsg;
         errMsg << "Invalid Schema Version: " << schemaVersion;

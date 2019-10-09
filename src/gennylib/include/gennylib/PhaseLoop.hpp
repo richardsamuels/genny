@@ -118,13 +118,13 @@ public:
         }
 
         const auto rateSpec = phaseContext["GlobalRate"].maybe<RateSpec>();
-        const auto rateLimiterName =
+        auto rateLimiterName =
             phaseContext["RateLimiterName"].maybe<std::string>().value_or("defaultRateLimiter");
 
         if (rateSpec) {
             std::ostringstream defaultRLName;
             defaultRLName << phaseContext.actor()["Name"] << phaseContext.getPhaseNumber();
-            const auto rateLimiterName =
+            rateLimiterName =
                 phaseContext["RateLimiterName"].maybe<std::string>().value_or(defaultRLName.str());
 
             if (!_doesBlock) {
@@ -140,7 +140,7 @@ public:
 
     constexpr void limitRate(const SteadyClock::time_point referenceStartingPoint,
                              const int64_t currentIteration,
-                             const PhaseNumber inPhase) {
+                             const PhaseNumber) {
         // This function is called after each iteration, so we never rate limit the
         // first iteration. This means the number of completed operations is always
         // `n * GlobalRateLimiter::_burstSize + m` instead of an exact multiple of
@@ -166,7 +166,7 @@ public:
         }
     }
 
-    constexpr SteadyClock::time_point computeReferenceStartingPoint() const {
+    [[nodiscard]] constexpr SteadyClock::time_point computeReferenceStartingPoint() const {
         // avoid doing now() if no minDuration configured
         return _minDuration ? SteadyClock::now() : SteadyClock::time_point::min();
     }
@@ -182,7 +182,7 @@ public:
         return _minDuration == other._minDuration && _minIterations == other._minIterations;
     }
 
-    constexpr bool doesBlockCompletion() const {
+    [[nodiscard]] constexpr bool doesBlockCompletion() const {
         return _doesBlock;
     }
 
@@ -298,7 +298,7 @@ public:
 
     // Iterator concepts only require !=, but the logic is much easier to reason about
     // for ==, so just negate that logic 😎 (compiler should inline it)
-    const bool operator!=(const ActorPhaseIterator& rhs) const {
+    bool operator!=(const ActorPhaseIterator& rhs) const {
         return !(*this == rhs);
     }
 
@@ -378,12 +378,12 @@ public:
     };
 
     // Used by PhaseLoopIterator::doesBlockCompletion()
-    constexpr bool doesBlock() const {
+    [[nodiscard]] constexpr bool doesBlock() const {
         return _iterationCheck->doesBlockCompletion();
     }
 
     // Checks if the actor is performing a nullOp. Used only for testing.
-    constexpr bool isNop() const {
+    [[nodiscard]] constexpr bool isNop() const {
         return !_value;
     }
 
@@ -432,7 +432,7 @@ public:
         return _value.operator->();
     }
 
-    PhaseNumber phaseNumber() const {
+    [[nodiscard]] PhaseNumber phaseNumber() const {
         return _currentPhase;
     }
 
@@ -517,11 +517,11 @@ public:
     }
 
 private:
-    constexpr bool morePhases() const {
+    [[nodiscard]] constexpr bool morePhases() const {
         return this->_orchestrator.morePhases();
     }
 
-    constexpr bool doesBlockOn(PhaseNumber phase) const {
+    [[nodiscard]] constexpr bool doesBlockOn(PhaseNumber phase) const {
         if (auto item = _phaseMap.find(phase); item != _phaseMap.end()) {
             return item->second.doesBlock();
         }

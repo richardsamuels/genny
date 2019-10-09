@@ -119,6 +119,14 @@ function(CreateGennyTargets)
             ${CGT_DEPENDS}
     )
 
+    if(NOT CGT_TYPE MATCHES "^INTERFACE$")
+        if(MSVC)
+            target_compile_options("${CGT_NAME}" PRIVATE /W4 /WX)
+        else()
+            target_compile_options("${CGT_NAME}" PRIVATE -Wall -Wextra -pedantic -Werror)
+        endif()
+    endif()
+
     ## install / put in export
 
     install(DIRECTORY include/
@@ -136,6 +144,13 @@ function(CreateGennyTargets)
     if(CGT_EXECUTABLE)
         add_executable("${CGT_EXECUTABLE}" src/main.cpp)
         target_link_libraries("${CGT_EXECUTABLE}" "${CGT_NAME}")
+        if(NOT CGT_TYPE MATCHES "^INTERFACE$")
+            if(MSVC)
+                target_compile_options("${CGT_EXECUTABLE}" PRIVATE /W4 /WX)
+            else()
+                target_compile_options("${CGT_EXECUTABLE}" PRIVATE -Wall -Wextra -pedantic -Werror)
+            endif()
+        endif()
         install(TARGETS  "${CGT_EXECUTABLE}"
                 RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
     endif()
@@ -151,6 +166,13 @@ function(CreateGennyTargets)
             "${CGT_NAME}"
             ${CGT_TEST_DEPENDS}
         )
+        if(NOT CGT_TYPE MATCHES "^INTERFACE$")
+            if(MSVC)
+                target_compile_options("${CGT_NAME}_test" PRIVATE /W4 /WX)
+            else()
+                target_compile_options("${CGT_NAME}_test" PRIVATE -Wall -Wextra -pedantic -Werror)
+            endif()
+        endif()
         ParseAndAddCatchTests("${CGT_NAME}_test")
     endif()
 
@@ -164,6 +186,13 @@ function(CreateGennyTargets)
             "${CGT_NAME}"
             ${CGT_TEST_DEPENDS}
         )
+        if(NOT CGT_TYPE MATCHES "^INTERFACE$")
+            if(MSVC)
+                target_compile_options("${CGT_NAME}_benchmark" PRIVATE /W4 /WX)
+            else()
+                target_compile_options("${CGT_NAME}_benchmark" PRIVATE -Wall -Wextra -pedantic -Werror)
+            endif()
+        endif()
         ParseAndAddCatchTests("${CGT_NAME}_benchmark")
     endif()
 

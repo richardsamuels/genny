@@ -93,7 +93,7 @@ std::string invalidYamlExceptionWhat(const std::string& path,
 
     return out.str();
 }
-std::string invalidConversionExceptionWhat(const struct Node* node,
+std::string invalidConversionExceptionWhat(const class Node* node,
                                            const YAML::BadConversion& yamlException,
                                            const std::type_info& destType) {
     std::stringstream out;
@@ -122,7 +122,7 @@ InvalidYAMLException::InvalidYAMLException(const std::string& path,
     *this << InvalidYAMLException::Message{_what};
 }
 
-InvalidConversionException::InvalidConversionException(const struct Node* node,
+InvalidConversionException::InvalidConversionException(const class Node* node,
                                                        const YAML::BadConversion& yamlException,
                                                        const std::type_info& destType)
     : _what{invalidConversionExceptionWhat(node, yamlException, destType)} {
